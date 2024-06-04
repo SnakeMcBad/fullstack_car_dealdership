@@ -62,10 +62,12 @@ app.get('/fetchDealers', async (req, res) => {
       const dealerships = await getAllDealerships();
       res.status(200).json(dealerships);
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching dealerships', error });
+      console.error('Error fetching dealerships:', error);
+      res.status(500).json({ message: 'Error fetching dealerships', error: error.message });
     }
   });
   
+    
 // Express route to fetch dealer by a particular state
 app.get('/fetchDealers/:state', async (req, res) => {
     const { state } = req.params;
@@ -73,9 +75,11 @@ app.get('/fetchDealers/:state', async (req, res) => {
       const dealerships = await getDealershipsByState(state);
       res.status(200).json(dealerships);
     } catch (error) {
-      res.status(500).json({ message: `Error fetching dealerships in state ${state}`, error });
+      console.error(`Error fetching dealerships in state ${state}:`, error);
+      res.status(500).json({ message: `Error fetching dealerships in state ${state}`, error: error.message });
     }
   });
+  
   
 // Express route to fetch dealer by a particular id
 app.get('/fetchDealer/:id', async (req, res) => {
@@ -88,9 +92,11 @@ app.get('/fetchDealer/:id', async (req, res) => {
         res.status(404).json({ message: `Dealership with ID ${id} not found` });
       }
     } catch (error) {
-      res.status(500).json({ message: `Error fetching dealership with ID ${id}`, error });
+      console.error(`Error fetching dealership with ID ${id}:`, error);
+      res.status(500).json({ message: `Error fetching dealership with ID ${id}`, error: error.message });
     }
   });
+  
   
 
 //Express route to insert review
@@ -124,3 +130,30 @@ app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+async function getAllDealerships() {
+    // Simulating a delay as if fetching from a database
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(dealerships);
+      }, 1000);
+    });
+  }
+  
+  async function getDealershipsByState(state) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const result = dealerships.filter(dealer => dealer.state === state);
+        resolve(result);
+      }, 1000);
+    });
+  }
+  
+  async function getDealershipById(id) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const result = dealerships.find(dealer => dealer.id === parseInt(id, 10));
+        resolve(result);
+      }, 1000);
+    });
+  }
