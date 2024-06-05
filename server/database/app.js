@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // Keep this declaration
 const fs = require('fs');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -63,42 +63,37 @@ app.get('/fetchDealers', async (req, res) => {
 
 // Fetch dealerships by state
 app.get('/fetchDealers/:state', async (req, res) => {
-    try {
-      const { state } = req.params;
-      const dealerships = await Dealerships.find({ state: { $regex: new RegExp('^' + state, 'i') } });
-      res.json(dealerships);
-    } catch (error) {
-      console.error('Error fetching dealerships by state:', error);
-      res.status(500).json({ error: 'Error fetching dealerships' });
-    }
-  });
-  
-  
-  const mongoose = require('mongoose');
+  try {
+    const { state } = req.params;
+    const dealerships = await Dealerships.find({ state: { $regex: new RegExp('^' + state, 'i') } });
+    res.json(dealerships);
+  } catch (error) {
+    console.error('Error fetching dealerships by state:', error);
+    res.status(500).json({ error: 'Error fetching dealerships' });
+  }
+});
 
-  // Fetch dealership by ID
-  app.get('/fetchDealer/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      console.log('ID:', id); // Add this line to log the ID
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ message: 'Invalid dealership ID' });
-      }
-  
-      const dealership = await Dealerships.findById(id);
-      console.log('Dealership:', dealership); // Add this line to log the dealership fetched
-      if (dealership) {
-        res.json(dealership);
-      } else {
-        res.status(404).json({ message: `Dealership with ID ${id} not found` });
-      }
-    } catch (error) {
-      console.error('Error fetching dealership by ID:', error);
-      res.status(500).json({ error: 'Error fetching dealership' });
+// Fetch dealership by ID
+app.get('/fetchDealer/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('ID:', id); // Add this line to log the ID
+
+    // Find dealership by the 'id' field instead of checking for ObjectID validity
+    const dealership = await Dealerships.findOne({ id: id });
+
+    console.log('Dealership:', dealership); // Add this line to log the dealership fetched
+    if (dealership) {
+      res.json(dealership);
+    } else {
+      res.status(404).json({ message: `Dealership with ID ${id} not found` });
     }
-  });
-  
-  
+  } catch (error) {
+    console.error('Error fetching dealership by ID:', error);
+    res.status(500).json({ error: 'Error fetching dealership' });
+  }
+});
+
 
 // Insert review
 app.post('/insert_review', async (req, res) => {
